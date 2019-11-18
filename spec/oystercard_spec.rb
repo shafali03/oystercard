@@ -5,9 +5,30 @@ describe Oystercard do
   subject(:oystercard) { described_class.new }
 
   it 'should start with a balance of zero' do
-   expect(oystercard.balance).to eq(0)
+    expect(oystercard.balance).to eq(0)
   end
 
+  describe "with maximum balance" do
+    before(:each) do 
+      oystercard.top_up(Oystercard::MAX_BALANCE)
+    end
+    it "should touch in" do
+      oystercard.touch_in
+      expect(oystercard.in_journey?).to eq true
+    end
+
+    it "should not allow you to touch in if already on a journey" do
+      oystercard.touch_in
+      expect { oystercard.touch_in }.to raise_error "Card already touched in"
+    end
+
+    it "should touch out" do
+      oystercard.touch_in
+      oystercard.touch_out
+      expect(oystercard.in_journey?).to eq false
+    end
+    
+  end
   describe "#top_up" do
 
     it "should add £1 to the oystercard" do
@@ -51,31 +72,14 @@ describe Oystercard do
   end
 
   describe "#touch_in" do
-
-    it "should change the state of the card on journey" do
-      oystercard.touch_in
-      expect(oystercard.in_journey?).to eq true
+    it "should raise an error when balance is insufficient" do
+      expect { oystercard.touch_in }.to raise_error "Insufficient balance, cannot touch in: please top up"
     end
-
-    it "should not allow you to touch in if already on a journey" do
-      oystercard.touch_in
-      expect { oystercard.touch_in }.to raise_error "Card already touched in"
-    end
-
   end
 
   describe "#touch_out" do
-
-    it "should change the state of the card on journey end" do
-      oystercard.touch_in
-      oystercard.touch_out
-      expect(oystercard.in_journey?).to eq false
-    end
-
     it "should not allow you to touch out if not on a journey" do
       expect { oystercard.touch_out }.to raise_error "Card not touched in"
     end
-
   end
-
 end

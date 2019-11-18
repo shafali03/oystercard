@@ -29,4 +29,11 @@ describe Oystercard do
     end
   end
 
+  describe "#deduct" do
+    it "should reduce the balance by specified amount" do
+      oystercard.top_up(10)
+      oystercard.deduct(3)
+      expect(oystercard.balance).to eq(7)
+    end
+  end
 end

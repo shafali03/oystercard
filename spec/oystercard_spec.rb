@@ -21,6 +21,11 @@ describe Oystercard do
       expect(oystercard.balance).to eq(3)
     end
 
+    it "should throw an exception if the new balance would exceed the limit" do
+      oystercard.top_up(Oystercard::DEFAULT_LIMIT)
+      message = "Exceeded maximum limit of £#{Oystercard::DEFAULT_LIMIT}"
+      expect { oystercard.top_up(1) }.to raise_error { message }
+    end
   end
 
 end

@@ -22,8 +22,9 @@ describe Oystercard do
     end
 
     it "should throw an exception if the new balance would exceed the limit" do
-      oystercard.top_up(Oystercard::DEFAULT_LIMIT)
-      message = "Exceeded maximum limit of £#{Oystercard::DEFAULT_LIMIT}"
+      maximum_balance = Oystercard::MAX_BALANCE
+      oystercard.top_up(maximum_balance)
+      message = "Exceeded maximum balance of £#{maximum_balance}"
       expect { oystercard.top_up(1) }.to raise_error { message }
     end
   end

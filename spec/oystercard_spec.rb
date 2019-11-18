@@ -36,4 +36,26 @@ describe Oystercard do
       expect(oystercard.balance).to eq(7)
     end
   end
+
+  describe "#in_journey?" do
+
+    it "should return false before touching in" do
+      expect(oystercard.in_journey?).to eq false
+    end
+
+    it "should return true after touching in" do
+      oystercard.touch_in
+      expect(oystercard.in_journey?).to eq true
+    end
+
+  end
+
+  describe "#touch_in" do
+
+  end
+
+  describe "#touch_out" do
+    
+  end
+
 end

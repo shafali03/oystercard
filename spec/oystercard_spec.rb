@@ -35,6 +35,11 @@ describe Oystercard do
       oystercard.deduct(3)
       expect(oystercard.balance).to eq(7)
     end
+
+    it "should raise an error when balance is insufficient" do
+      expect { oystercard.deduct(1) }.to raise_error { "Insufficient balance, please top up" }
+    end
+
   end
 
   describe "#in_journey?" do
@@ -43,19 +48,25 @@ describe Oystercard do
       expect(oystercard.in_journey?).to eq false
     end
 
-    it "should return true after touching in" do
+  end
+
+  describe "#touch_in" do
+
+    it "should change the state of the card on journey" do
       oystercard.touch_in
       expect(oystercard.in_journey?).to eq true
     end
 
   end
 
-  describe "#touch_in" do
-
-  end
-
   describe "#touch_out" do
-    
+
+    it "should change the state of the card on journey end" do
+      oystercard.touch_in
+      oystercard.touch_out
+      expect(oystercard.in_journey?).to eq false
+    end
+
   end
 
 end

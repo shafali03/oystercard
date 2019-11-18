@@ -16,6 +16,8 @@ class Oystercard
   end
 
   def deduct(amount)
+    raise "Insufficient balance, please top up" if (balance - amount) < 0
+
     @balance -= amount
   end
 
@@ -25,6 +27,10 @@ class Oystercard
 
   def touch_in
     @in_journey = true
+  end
+
+  def touch_out
+    @in_journey = false
   end
 
 end

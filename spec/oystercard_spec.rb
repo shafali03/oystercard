@@ -57,6 +57,11 @@ describe Oystercard do
       expect(oystercard.in_journey?).to eq true
     end
 
+    it "should not allow you to touch in if already on a journey" do
+      oystercard.touch_in
+      expect { oystercard.touch_in }.to raise_error "Card already touched in"
+    end
+
   end
 
   describe "#touch_out" do
@@ -65,6 +70,10 @@ describe Oystercard do
       oystercard.touch_in
       oystercard.touch_out
       expect(oystercard.in_journey?).to eq false
+    end
+
+    it "should not allow you to touch out if not on a journey" do
+      expect { oystercard.touch_out }.to raise_error "Card not touched in"
     end
 
   end

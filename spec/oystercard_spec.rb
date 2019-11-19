@@ -3,7 +3,9 @@ require 'oystercard'
 describe Oystercard do
 
   subject(:oystercard) { described_class.new }
-  let(:station) {double :station}
+  let(:entry_station) {double :station}
+  let(:ex_station) {double :station}
+  let(:journey) { {entry_station: entry_station, exit_station: ex_station} }
 
   it 'should start with a balance of zero' do
     expect(oystercard.balance).to eq(0)
@@ -27,7 +29,7 @@ describe Oystercard do
 
     it "should touch out" do
       oystercard.touch_in(:station)
-      oystercard.touch_out
+      oystercard.touch_out(:ex_station)
       expect(oystercard.in_journey?).to eq false
     end
 
@@ -66,24 +68,40 @@ describe Oystercard do
     it "should raise an error when balance is insufficient" do
       expect { oystercard.touch_in(:station) }.to raise_error "Insufficient balance, cannot touch in: please top up"
     end
-    
+
     it "save entry station at touch in" do
       oystercard.top_up(10)
-      oystercard.touch_in(station)
-      expect(oystercard.entry_station).to eq(station)
+      oystercard.touch_in(entry_station)
+      expect(oystercard.entry_station).to eq(entry_station)
   end
 
 end
 
   describe "#touch_out" do
     it "should not allow you to touch out if not on a journey" do
-      expect { oystercard.touch_out }.to raise_error "Card not touched in"
+      expect { oystercard.touch_out(:ex_station) }.to raise_error "Card not touched in"
     end
 
     it "deduct minimum fare from balance when touching out" do
       oystercard.top_up(10)
       oystercard.touch_in(:station)
-      expect { oystercard.touch_out }.to change{oystercard.balance}.by(-Oystercard::MIN_FARE)
+      expect { oystercard.touch_out(:ex_station) }.to change{oystercard.balance}.by(-Oystercard::MIN_FARE)
+    end
+
+    it "accepts a argument when touch out method" do
+      oystercard.top_up(10)
+      oystercard.touch_in("Makers")
+      oystercard.touch_out("shoreditch")
+      expect( oystercard.exit_station).to eq("shoreditch")
+    end
+  end
+
+  describe "#show_journey" do
+    it "displays the previus journey after completing 1 full journey" do
+      oystercard.top_up(10)
+      oystercard.touch_in(entry_station)
+      oystercard.touch_out(ex_station)
+      expect(oystercard.journey).to include(journey)
     end
   end
 end

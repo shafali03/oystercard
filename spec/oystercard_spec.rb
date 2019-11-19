@@ -9,9 +9,11 @@ describe Oystercard do
   end
 
   describe "with maximum balance" do
-    before(:each) do 
+    before(:each) do
       oystercard.top_up(Oystercard::MAX_BALANCE)
     end
+
+
     it "should touch in" do
       oystercard.touch_in
       expect(oystercard.in_journey?).to eq true
@@ -27,7 +29,8 @@ describe Oystercard do
       oystercard.touch_out
       expect(oystercard.in_journey?).to eq false
     end
-    
+
+
   end
   describe "#top_up" do
 
@@ -50,19 +53,6 @@ describe Oystercard do
     end
   end
 
-  describe "#deduct" do
-    it "should reduce the balance by specified amount" do
-      oystercard.top_up(10)
-      oystercard.deduct(3)
-      expect(oystercard.balance).to eq(7)
-    end
-
-    it "should raise an error when balance is insufficient" do
-      expect { oystercard.deduct(1) }.to raise_error { "Insufficient balance, please top up" }
-    end
-
-  end
-
   describe "#in_journey?" do
 
     it "should return false before touching in" do
@@ -80,6 +70,12 @@ describe Oystercard do
   describe "#touch_out" do
     it "should not allow you to touch out if not on a journey" do
       expect { oystercard.touch_out }.to raise_error "Card not touched in"
+    end
+
+    it "deduct minimum fare from balance when touching out" do
+      oystercard.top_up(10)
+      oystercard.touch_in
+      expect { oystercard.touch_out }.to change{oystercard.balance}.by(-Oystercard::MIN_FARE)
     end
   end
 end
